@@ -1,0 +1,13 @@
+{% block subject %}
+Password reset link
+{% endblock %}
+
+{% block body_text %}
+You can reset your password by visiting this link: {{ app_url }}/user/reset/{{ email }}/{{ secret }}
+{% endblock %}
+
+{% block body_html %}
+<p>
+	You can reset your password by visiting this link: {{ app_url }}/user/reset/{{ email }}/{{ secret }}
+</p>
+{% endblock %}

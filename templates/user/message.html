@@ -1,0 +1,21 @@
+{% if user %}
+{%	set title = user.title %}
+{% else %}
+{%	set title = 'Reset success' %}
+{% endif %}
+
+{% extends "user/base.html" %}
+
+{% block content %}
+
+	<div class="page-header">
+		<h1>Message</h1>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			{{ message|raw }}
+		</div>
+	</div>
+
+{% endblock content %}

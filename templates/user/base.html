@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>{{ title }} - Lagan user example</title>
+
+{% block head %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+{% endblock head %}
+
+</head>
+<body>
+
+	<div class="container">
+
+{% if flash.error or flash.success %}
+		<div class="alert{% if flash.error %} alert-danger{% else %} alert-success{% endif %} alert-dismissable">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			{% if flash.error %}{{ flash.error[0] }}{% else %}{{ flash.success[0] }}{% endif %}
+		</div>
+{% endif %}
+
+{% if authenticated %}
+		<p>You are logged in as {{ authenticated.name }} </p>
+{% endif %}
+
+{% block content %}
+{# Content from child template #}
+{% endblock content %}
+
+	</div>
+
+{% block javascript %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+{% endblock javascript %}
+
+</body>
+</html>

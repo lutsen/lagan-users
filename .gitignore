@@ -1,0 +1,41 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Config file #
+###############
+config.php
+
+# Directory contents #
+######################
+vendor/*
+cache/*
+cache-email/*
+public/property-templates/*
+public/uploads/*
+
+# Composer #
+############
+composer.lock
+composer.phar
+
+# Lagan basic files #
+#####################
+cache
+models/lagan/Hoverkraft.php
+public
+routes/admin.php
+routes/functions.php
+routes/public.php
+routes/static.php
+templates/admin/*
+templates/public/*
+templates/static/*
+tests
+setup.php
