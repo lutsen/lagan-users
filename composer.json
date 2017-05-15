@@ -1,5 +1,5 @@
 {
-	"name": "lagan/lagan",
+	"name": "lagan/lagan-users",
 	"type": "project",
 	"description": "Lagan lets you create flexible content objects with a simple class, and manage them with a web interface.",
 	"keywords": ["cms","content", "backend","slim","redbean","twig","validation"],
