@@ -168,13 +168,25 @@ $app->group('/user', function () {
 	$this->get('/{id}', function ($request, $response, $args) {
 		$u = new \Lagan\Model\User;
 
-		// Show populated form
-		return $this->view->render($response, 'user/user.html', [
-			'method' => 'put',
-			'flash' => $this->flash->getMessages(),
-			'user' => $u->read( $args['id'] ),
-			'authenticated' => $this->auth->session->authenticated
-		]);
+		try {
+
+			// Show populated form
+			return $this->view->render($response, 'user/user.html', [
+				'method' => 'put',
+				'flash' => $this->flash->getMessages(),
+				'user' => $u->read( $args['id'] ),
+				'authenticated' => $this->auth->session->authenticated
+			]);
+
+		} catch (Exception $e) {
+			$this->flash->addMessage( 'error', $e->getMessage() );
+
+			return $response->withStatus(302)->withHeader(
+				'Location',
+				$this->get('router')->pathFor( 'listusers' )
+			);
+		}
+
 	})->setName('getuser');
 
 	// Add
@@ -209,12 +221,10 @@ $app->group('/user', function () {
 
 			// Check if user is logged in
 			$user = $u->read( $args['id'] );
-			if ( $this->auth->check( $user->id ) ) {
-				$u->update( sanitizeUserData( $data ) , $args['id'] );
-				$this->flash->addMessage( 'success', $user->title.' is updated.' );
-			} else {
-				throw new \Exception('You are not allowed to update this user.');
-			}
+			$this->auth->check( $user->id ); // Throws exception on fail
+
+			$u->update( sanitizeUserData( $data ) , $args['id'] );
+			$this->flash->addMessage( 'success', $user->title.' is updated.' );
 
 		} catch (Exception $e) {
 			$this->flash->addMessage( 'error', $e->getMessage() );
@@ -234,12 +244,10 @@ $app->group('/user', function () {
 
 			// Check if user is logged in
 			$user = $u->read( $args['id'] );
-			if ( $this->auth->check( $user->id ) ) {
-				$u->delete( $args['id'] );
-				$this->flash->addMessage( 'success', 'The user is deleted.' );
-			} else {
-				throw new \Exception('You are not allowed to delete this user.');
-			}
+			$this->auth->check( $user->id ); // Throws exception on fail
+
+			$u->delete( $args['id'] );
+			$this->flash->addMessage( 'success', 'The user is deleted.' );
 
 		} catch (Exception $e) {
 			$this->flash->addMessage( 'error', $e->getMessage() );
