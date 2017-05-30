@@ -19,16 +19,22 @@ $app->add(new \Slim\Middleware\Session([
 ]));
 
 // Add authentication service
-$container['auth'] = function ($c) {
-	return new \Auth;
+$container['auth'] = function ($container) {
+	return new \Auth($container);
 };
 
-// Make sure no extra (admin) data is added to a user
-function sanitizeUserData( $data ) {
-	if ( isset( $data['title'] ) ) $return['title'] = $data['title'];
-	if ( isset( $data['email'] ) ) $return['email'] = $data['email'];
-	if ( isset( $data['password'] ) ) $return['password'] = $data['password'];
-	return $return;
+/**
+ * Sanitize input data. Throws an exception if restricted variables are found.
+ *
+ * @var string[] $data Input data array
+ * @var string[] $restricted Array with variable names that are not allowed
+ */
+function sanitizeData( $data, $restricted ) {
+	foreach ($data as $key => $value) {
+		if ( in_array($key, $restricted) ) {
+			throw new \Exception('You are not allowed to change this variable.');
+		}
+	}
 }
 
 // User routes
@@ -51,8 +57,6 @@ $app->group('/user', function () {
 
 	// Form to add new user
 	$this->get('/add', function ($request, $response, $args) {
-		$u = new \Lagan\Model\User;
-
 		// Show form
 		return $this->view->render($response, 'user/user.html', [
 			'method' => 'post',
@@ -195,7 +199,8 @@ $app->group('/user', function () {
 		$data = $request->getParsedBody();
 
 		try {
-			$user = $u->create( sanitizeUserData( $data ) );
+			sanitizeData( $data, [ 'id', 'modified', 'reset' ] ); // Throws exception on fail
+			$user = $u->create( $data );
 			$this->flash->addMessage( 'success', $user->title.' is added.' );
 
 			return $response->withStatus(302)->withHeader(
@@ -223,7 +228,8 @@ $app->group('/user', function () {
 			$user = $u->read( $args['id'] );
 			$this->auth->check( $user->id ); // Throws exception on fail
 
-			$u->update( sanitizeUserData( $data ) , $args['id'] );
+			sanitizeData( $data, [ 'id', 'modified', 'reset' ] ); // Throws exception on fail
+			$u->update( $data , $args['id'] );
 			$this->flash->addMessage( 'success', $user->title.' is updated.' );
 
 		} catch (Exception $e) {

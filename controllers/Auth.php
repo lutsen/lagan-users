@@ -2,9 +2,11 @@
 
 class Auth {
 	public $session;
+	public $container;
 
-	public function __construct() {
+	public function __construct($container) {
 		$this->session = new \SlimSession\Helper;
+		$this->container = $container;
 	}
 
 	public function login( $user ) {
@@ -41,6 +43,37 @@ class Auth {
 		} else {
 			throw new \Exception('You need to log in to perform this action.');
 		}
+	}
+
+	/**
+	 * Get logged in user array.
+	 *
+	 * @return string[] Array with logged in user name, email and id.
+	 */
+	public function get() {
+		if ( isset( $this->session->authenticated ) ) {
+			return $this->session->authenticated;
+		} else {
+			throw new \Exception('You need to log in to perform this action.');
+		}
+	}
+
+	/**
+	 * Handle thrown exception.
+	 *
+	 * @var object $exception
+	 * @var string $pathname
+	 * @var string[] $pathvars
+	 *
+	 * @return response
+	 */
+	public function handleException( $exception, $pathname, $pathvars = [] ) {
+		$this->container->flash->addMessage( 'error', $exception->getMessage() );
+
+		return $this->container->response->withStatus(302)->withHeader(
+			'Location',
+			$this->container->get('router')->pathFor( $pathname, $pathvars )
+		);
 	}
 
 }
